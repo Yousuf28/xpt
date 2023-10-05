@@ -1,8 +1,8 @@
-webr::install("DT")
-webr::install("haven")
+## webr::install("DT")
+# webr::install("haven")
 library(shiny)
-library(DT)
-library(haven)
+## library(DT)
+# library(haven)
 
 # Define UI for data upload app ----
 ui <- fluidPage(
@@ -22,9 +22,13 @@ ui <- fluidPage(
       ##           accept = c(".xpt","text/csv",
       ##                    "text/comma-separated-values,text/plain",
       ##                    ".csv")),
+# shiny::fileInput('file1',label = 'Choose xpt file',
+#                  multiple = FALSE,
+#                  accept = ".xpt")
+
 shiny::fileInput('file1',label = 'Choose xpt file',
                  multiple = FALSE,
-                 accept = ".xpt")
+                 accept = ".csv")
       # Horizontal line ----
       ## tags$hr(),
 
@@ -60,8 +64,8 @@ shiny::fileInput('file1',label = 'Choose xpt file',
     mainPanel(
 
       # Output: Data file ----
-      DT::DTOutput('contents')
-      ## tableOutput("contents")
+      ## DT::DTOutput('contents')
+      tableOutput("contents")
 
     )
 
@@ -71,8 +75,8 @@ shiny::fileInput('file1',label = 'Choose xpt file',
 # Define server logic to read selected file ----
 server <- function(input, output) {
 
-  output$contents <- DT::renderDT({
-  ## output$contents <- renderTable({
+  ## output$contents <- DT::renderDT({
+  output$contents <- renderTable({
 
     # input$file1 will be NULL initially. After the user selects
     # and uploads a file, head of that data file by default,
@@ -82,7 +86,8 @@ server <- function(input, output) {
 
     # when reading semicolon separated files,
     # having a comma separator causes `read.csv` to error
-        df <- haven::read_xpt(input$file1$datapath)
+        # df <- haven::read_xpt(input$file1$datapath)
+    df <- read.csv(input$file1$datapath)
         df
 
 
