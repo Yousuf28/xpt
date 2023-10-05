@@ -1,4 +1,6 @@
 library(shiny)
+library(DT)
+library(haven)
 
 # Define UI for data upload app ----
 ui <- fluidPage(
