@@ -46,19 +46,20 @@ ui <- fluidPage(
       tags$hr(),
 
       # Input: Select number of rows to display ----
-      radioButtons("disp", "Display",
-                   choices = c(Head = "head",
-                               All = "all"),
-                   selected = "head")
-
+    #   radioButtons("disp", "Display",
+    #                choices = c(Head = "head",
+    #                            All = "all"),
+    #                selected = "head")
+    # 
     ),
 
     # Main panel for displaying outputs ----
     mainPanel(
 
       # Output: Data file ----
-      rhandsontable::rHandsontableOutput('contents')
+      # rhandsontable::rHandsontableOutput('contents')
       # tableOutput("contents")
+      DT::DTOutput('contents')
 
     )
 
@@ -69,7 +70,8 @@ ui <- fluidPage(
 server <- function(input, output) {
 
   # output$contents <- renderTable({
-  output$contents <- rhandsontable::renderRHandsontable({
+  # output$contents <- rhandsontable::renderRHandsontable({
+  output$contents <- DT::renderDT({
 
     # input$file1 will be NULL initially. After the user selects
     # and uploads a file, head of that data file by default,
@@ -86,7 +88,7 @@ server <- function(input, output) {
         #          sep = input$sep,
         #          quote = input$quote)
         df <- haven::read_xpt(input$file1$datapath)
-        df <- rhandsontable::rhandsontable(df)
+        # df <- rhandsontable::rhandsontable(df)
         df
       },
       error = function(e) {
@@ -95,12 +97,12 @@ server <- function(input, output) {
       }
     )
 
-    if(input$disp == "head") {
-      return(head(df))
-    }
-    else {
-      return(df)
-    }
+    # if(input$disp == "head") {
+    #   return(head(df))
+    # }
+    # else {
+    #   return(df)
+    # }
 
   })
 
