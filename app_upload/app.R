@@ -1,3 +1,5 @@
+webr::install("DT")
+webr::install("haven")
 library(shiny)
 library(DT)
 library(haven)
