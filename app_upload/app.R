@@ -1,8 +1,8 @@
-## webr::install("DT")
-# webr::install("haven")
+webr::install("DT")
+webr::install("haven")
 library(shiny)
-## library(DT)
-# library(haven)
+library(DT)
+library(haven)
 
 # Define UI for data upload app ----
 ui <- fluidPage(
@@ -16,47 +16,10 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(
 
-      # Input: Select a file ----
-      ## fileInput("file1", "Choose CSV File",
-      ##           multiple = FALSE,
-      ##           accept = c(".xpt","text/csv",
-      ##                    "text/comma-separated-values,text/plain",
-      ##                    ".csv")),
-# shiny::fileInput('file1',label = 'Choose xpt file',
-#                  multiple = FALSE,
-#                  accept = ".xpt")
-
 shiny::fileInput('file1',label = 'Choose xpt file',
                  multiple = FALSE,
-                 accept = ".csv")
-      # Horizontal line ----
-      ## tags$hr(),
+                 accept = ".xpt")
 
-      ## # Input: Checkbox if file has header ----
-      ## checkboxInput("header", "Header", TRUE),
-
-      ## # Input: Select separator ----
-      ## radioButtons("sep", "Separator",
-      ##              choices = c(Comma = ",",
-      ##                          Semicolon = ";",
-      ##                          Tab = "\t"),
-      ##              selected = ","),
-
-      ## # Input: Select quotes ----
-      ## radioButtons("quote", "Quote",
-      ##              choices = c(None = "",
-      ##                          "Double Quote" = '\\"',
-      ##                          "Single Quote" = "'"),
-      ##              selected = '\\"'),
-
-      ## # Horizontal line ----
-      ## tags$hr(),
-
-      ## # Input: Select number of rows to display ----
-      ## radioButtons("disp", "Display",
-      ##              choices = c(Head = "head",
-      ##                          All = "all"),
-      ##              selected = "head")
 
     ),
 
@@ -64,8 +27,8 @@ shiny::fileInput('file1',label = 'Choose xpt file',
     mainPanel(
 
       # Output: Data file ----
-      ## DT::DTOutput('contents')
-      tableOutput("contents")
+      DT::DTOutput('contents')
+      # tableOutput("contents")
 
     )
 
@@ -75,24 +38,17 @@ shiny::fileInput('file1',label = 'Choose xpt file',
 # Define server logic to read selected file ----
 server <- function(input, output) {
 
-  ## output$contents <- DT::renderDT({
-  output$contents <- renderTable({
-
-    # input$file1 will be NULL initially. After the user selects
-    # and uploads a file, head of that data file by default,
-    # or all rows if selected, will be shown.
-
+  output$contents <- DT::renderDT({
+  
     req(input$file1)
 
-    # when reading semicolon separated files,
-    # having a comma separator causes `read.csv` to error
-        # df <- haven::read_xpt(input$file1$datapath)
-    df <- read.csv(input$file1$datapath)
+   
+        df <- haven::read_xpt(input$file1$datapath)
+    
         df
 
+ })
 
-
-  })
 
 }
 
