@@ -4,13 +4,13 @@ library(shiny)
 ui <- fluidPage(
 
   # App title ----
-  titlePanel("Uploading Files"),
+  # titlePanel("Uploading Files"),
 
   # Sidebar layout with input and output definitions ----
-  sidebarLayout(
+  # sidebarLayout(
 
     # Sidebar panel for inputs ----
-    sidebarPanel(
+    # sidebarPanel(width = 2,
 
       # Input: Select a file ----
       # fileInput("file1", "Choose CSV File",
@@ -19,14 +19,14 @@ ui <- fluidPage(
       #                    "text/comma-separated-values,text/plain",
       #                    ".csv")),
       
-      shiny::fileInput('file1', "choose xpt file",
+      shiny::fileInput('file1', "Choose xpt file",
                        accept = '.xpt'),
 
       # Horizontal line ----
-      tags$hr(),
+      # tags$hr(),
 
       # Input: Checkbox if file has header ----
-      checkboxInput("header", "Header", TRUE),
+      # checkboxInput("header", "Header", TRUE),
 
       # Input: Select separator ----
       # radioButtons("sep", "Separator",
@@ -51,19 +51,19 @@ ui <- fluidPage(
     #                            All = "all"),
     #                selected = "head")
     # 
-    ),
+    
 
     # Main panel for displaying outputs ----
-    mainPanel(
+    # mainPanel(
 
       # Output: Data file ----
       # rhandsontable::rHandsontableOutput('contents')
       # tableOutput("contents")
       DT::DTOutput('contents')
 
-    )
+    # )
 
-  )
+  
 )
 
 # Define server logic to read selected file ----
