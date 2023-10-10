@@ -1,64 +1,16 @@
 library(shiny)
+# library(DT)
+# library(haven)
 
 # Define UI for data upload app ----
 ui <- fluidPage(
-
-  # App title ----
-  # titlePanel("Uploading Files"),
-
-  # Sidebar layout with input and output definitions ----
-  # sidebarLayout(
-
-    # Sidebar panel for inputs ----
-    # sidebarPanel(width = 2,
-
-      # Input: Select a file ----
-      # fileInput("file1", "Choose CSV File",
-      #           multiple = FALSE,
-      #           accept = c("text/csv",
-      #                    "text/comma-separated-values,text/plain",
-      #                    ".csv")),
       
       shiny::fileInput('file1', "Choose xpt file",
                        accept = '.xpt'),
 
-      # Horizontal line ----
-      # tags$hr(),
-
-      # Input: Checkbox if file has header ----
-      # checkboxInput("header", "Header", TRUE),
-
-      # Input: Select separator ----
-      # radioButtons("sep", "Separator",
-      #              choices = c(Comma = ",",
-      #                          Semicolon = ";",
-      #                          Tab = "\t"),
-      #              selected = ","),
-
-      # Input: Select quotes ----
-      # radioButtons("quote", "Quote",
-      #              choices = c(None = "",
-      #                          "Double Quote" = '\\"',
-      #                          "Single Quote" = "'"),
-      #              selected = '\\"'),
-
-      # Horizontal line ----
       tags$hr(),
+      downloadButton('down_xpt', 'Download file'),
 
-      # Input: Select number of rows to display ----
-    #   radioButtons("disp", "Display",
-    #                choices = c(Head = "head",
-    #                            All = "all"),
-    #                selected = "head")
-    # 
-    
-
-    # Main panel for displaying outputs ----
-    # mainPanel(
-
-      # Output: Data file ----
-      # rhandsontable::rHandsontableOutput('contents')
-      # tableOutput("contents")
       DT::DTOutput('contents')
 
     # )
@@ -68,43 +20,62 @@ ui <- fluidPage(
 
 # Define server logic to read selected file ----
 server <- function(input, output) {
-
-  # output$contents <- renderTable({
-  # output$contents <- rhandsontable::renderRHandsontable({
+  
+  v <- shiny::reactiveValues()
+  observeEvent(input$file1,{
+   req(input$file1)
+  tab <- haven::read_xpt(input$file1$datapath)
+  v$tab <- tab  
+  
+  })
+  
+# df <-  shiny::eventReactive(input$file1, {
+#    req(input$file1)
+#   tab <- haven::read_xpt(input$file1$datapath)
+#   tab
+#  })
   output$contents <- DT::renderDT({
-
-    # input$file1 will be NULL initially. After the user selects
-    # and uploads a file, head of that data file by default,
-    # or all rows if selected, will be shown.
-
     req(input$file1)
-
-    # when reading semicolon separated files,
-    # having a comma separator causes `read.csv` to error
-    tryCatch(
-      {
-        # df <- read.csv(input$file1$datapath,
-        #          header = input$header,
-        #          sep = input$sep,
-        #          quote = input$quote)
-        df <- haven::read_xpt(input$file1$datapath)
-        # df <- rhandsontable::rhandsontable(df)
+        df <- DT::datatable(v$tab,selection = 'none', editable = TRUE)
         df
-      },
-      error = function(e) {
-        # return a safeError if a parsing error occurs
-        stop(safeError(e))
-      }
-    )
-
-    # if(input$disp == "head") {
-    #   return(head(df))
-    # }
-    # else {
-    #   return(df)
-    # }
 
   })
+  # proxy = DT::dataTableProxy('contents')
+  # 
+  # observeEvent(input$contents_cell_edit, {
+  #   info = input$contents_cell_edit
+  #   str(info)
+  #   i = info$row
+  #   j = info$col
+  #   v = info$value
+  #   df[i, j] <<- DT::coerceValue(v, df[i, j])
+  #   replaceData(proxy, df, resetPaging = FALSE)  # important
+  # })
+  # 
+  
+  # proxy5 = dataTableProxy('contents')
+  observeEvent(input$contents_cell_edit, {
+    # info = input$contents_cell_edit
+    v$tab <<- DT::editData(v$tab,input[['contents_cell_edit']], 'contents')
+    # str(info)  # check what info looks like (a data frame of 3 columns)
+    # print(info)
+    # t <- df()
+    # print(head(t))
+    # df <<- editData(t, info)
+    # replaceData(proxy5, df, resetPaging = FALSE)  # important
+    # the above steps can be merged into a single editData() call; see examples below
+  })
+  
+  output$down_xpt <- shiny::downloadHandler(
+    filename = function() {
+      Sys.sleep(2)
+      paste0("data", ".xpt")
+    },
+    content = function(file) {
+      haven::write_xpt(v$tab, file)
+    }
+  )
+  
 
 }
 
