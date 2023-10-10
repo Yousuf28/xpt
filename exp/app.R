@@ -24,6 +24,7 @@ server <- function(input, output) {
   v <- shiny::reactiveValues()
   observeEvent(input$file1,{
    req(input$file1)
+    # print(input$file1$name)
   tab <- haven::read_xpt(input$file1$datapath)
   v$tab <- tab  
   
@@ -68,11 +69,17 @@ server <- function(input, output) {
   
   output$down_xpt <- shiny::downloadHandler(
     filename = function() {
-      Sys.sleep(2)
-      paste0("data", ".xpt")
+      # Sys.sleep(2)
+      # file_name <- basename(input$file1$datapath)
+     file_name <- strsplit(input$file1$name, '.xpt')[[1]]
+
+      paste0(file_name,"_edited", ".xpt")
+
     },
     content = function(file) {
-      haven::write_xpt(v$tab, file)
+      df <- v$tab
+      Sys.sleep(2)
+      haven::write_xpt(df, file)
     }
   )
   
