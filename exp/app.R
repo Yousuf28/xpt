@@ -2,6 +2,11 @@ library(shiny)
 # library(DT)
 # library(haven)
 
+downloadButton <- function(...) {
+  tag <- shiny::downloadButton(...)
+  tag$attribs$download <- NULL
+  tag
+}
 # Define UI for data upload app ----
 ui <- fluidPage(
       
@@ -10,7 +15,8 @@ ui <- fluidPage(
 
       tags$hr(),
       downloadButton('down_xpt', 'Download file'),
-
+      tags$hr(),
+      tags$hr(),
       DT::DTOutput('contents')
 
     # )
@@ -78,7 +84,8 @@ server <- function(input, output) {
     },
     content = function(file) {
       df <- v$tab
-      Sys.sleep(2)
+      ## Sys.sleep(2)
+     ## write.csv(df, file, row.names = FALSE)
       haven::write_xpt(df, file)
     }
   )
