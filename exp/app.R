@@ -1,4 +1,5 @@
-library(shiny)
+## library(shiny)
+## library(SASxport)
 # library(DT)
 # library(haven)
 
@@ -8,15 +9,15 @@ downloadButton <- function(...) {
   tag
 }
 # Define UI for data upload app ----
-ui <- fluidPage(
+ui <- shiny::fluidPage(
       
       shiny::fileInput('file1', "Choose xpt file",
                        accept = '.xpt'),
 
-      tags$hr(),
+      shiny::tags$hr(),
       downloadButton('down_xpt', 'Download file'),
-      tags$hr(),
-      tags$hr(),
+      shiny::tags$hr(),
+      shiny::tags$hr(),
       DT::DTOutput('contents')
 
     # )
@@ -26,12 +27,13 @@ ui <- fluidPage(
 
 # Define server logic to read selected file ----
 server <- function(input, output) {
-  
   v <- shiny::reactiveValues()
-  observeEvent(input$file1,{
-   req(input$file1)
+  shiny::observeEvent(input$file1,{
+   shiny::req(input$file1)
     # print(input$file1$name)
-  tab <- haven::read_xpt(input$file1$datapath)
+  ## tab <- haven::read_xpt(input$file1$datapath)
+  ## tab <- SASxport::read.xport(input$file1$datapath)
+  tab <- Hmisc::sasxport.get(input$file1$datapath, lowernames = F)
   v$tab <- tab  
   
   })
@@ -42,7 +44,7 @@ server <- function(input, output) {
 #   tab
 #  })
   output$contents <- DT::renderDT({
-    req(input$file1)
+    shiny::req(input$file1)
         df <- DT::datatable(v$tab,selection = 'none', editable = TRUE)
         df
 
@@ -61,9 +63,10 @@ server <- function(input, output) {
   # 
   
   # proxy5 = dataTableProxy('contents')
-  observeEvent(input$contents_cell_edit, {
+  shiny::observeEvent(input$contents_cell_edit, {
     # info = input$contents_cell_edit
     v$tab <<- DT::editData(v$tab,input[['contents_cell_edit']], 'contents')
+    print(names(v$tab))
     # str(info)  # check what info looks like (a data frame of 3 columns)
     # print(info)
     # t <- df()
@@ -79,14 +82,31 @@ server <- function(input, output) {
       # file_name <- basename(input$file1$datapath)
      file_name <- strsplit(input$file1$name, '.xpt')[[1]]
 
-      paste0(file_name,"_edited", ".xpt")
+      paste0(file_name, ".xpt")
+      ## paste0('bw.xpt')
 
     },
     content = function(file) {
       df <- v$tab
+      ## print(df)
+      ## print(names(df))
       ## Sys.sleep(2)
      ## write.csv(df, file, row.names = FALSE)
-      haven::write_xpt(df, file)
+     ## SASxport::write.xport(df, file=file)
+    ## print(file)
+## kk <- sub(tools::file_path_sans_ext(basename(file)), 'hello',file)
+      temp_dir <- tempdir()
+      print(temp_dir)
+      path <- fs::path(temp_dir, 'dm.xpt')
+
+      ## fs::file_move(file, path)
+
+      ## fs::file_copy(file, kk)
+
+print(path)
+     xportr::xportr_write(df, path = path )
+      ## haven::write_xpt(df, file)
+      fs::file_copy(path, file)
     }
   )
   
@@ -94,4 +114,4 @@ server <- function(input, output) {
 }
 
 # Create Shiny app ----
-shinyApp(ui, server)
+shiny::shinyApp(ui, server)
