@@ -31,9 +31,9 @@ server <- function(input, output) {
   shiny::observeEvent(input$file1,{
    shiny::req(input$file1)
     # print(input$file1$name)
-  ## tab <- haven::read_xpt(input$file1$datapath)
+  tab <- haven::read_xpt(input$file1$datapath)
   ## tab <- SASxport::read.xport(input$file1$datapath)
-  tab <- Hmisc::sasxport.get(input$file1$datapath, lowernames = F)
+  ## tab <- Hmisc::sasxport.get(input$file1$datapath, lowernames = F)
   v$tab <- tab  
   
   })
@@ -67,6 +67,7 @@ server <- function(input, output) {
     # info = input$contents_cell_edit
     v$tab <<- DT::editData(v$tab,input[['contents_cell_edit']], 'contents')
     print(names(v$tab))
+    ## print(head(v$tab))
     # str(info)  # check what info looks like (a data frame of 3 columns)
     # print(info)
     # t <- df()
@@ -81,6 +82,7 @@ server <- function(input, output) {
       # Sys.sleep(2)
       # file_name <- basename(input$file1$datapath)
      file_name <- strsplit(input$file1$name, '.xpt')[[1]]
+      print(file_name)
 
       paste0(file_name, ".xpt")
       ## paste0('bw.xpt')
@@ -88,25 +90,24 @@ server <- function(input, output) {
     },
     content = function(file) {
       df <- v$tab
-      ## print(df)
+      ## print(head(df))
       ## print(names(df))
       ## Sys.sleep(2)
      ## write.csv(df, file, row.names = FALSE)
      ## SASxport::write.xport(df, file=file)
     ## print(file)
 ## kk <- sub(tools::file_path_sans_ext(basename(file)), 'hello',file)
-      temp_dir <- tempdir()
-      print(temp_dir)
-      path <- fs::path(temp_dir, 'dm.xpt')
+      ## temp_dir <- tempdir()
+      ## print(temp_dir)
+      ## path <- fs::path(temp_dir, 'dm.xpt')
 
       ## fs::file_move(file, path)
 
       ## fs::file_copy(file, kk)
 
-print(path)
-     xportr::xportr_write(df, path = path )
-      ## haven::write_xpt(df, file)
-      fs::file_copy(path, file)
+     ## xportr::xportr_write(df, path = path )
+      haven::write_xpt(df, file)
+      ## fs::file_copy(path, file)
     }
   )
   
