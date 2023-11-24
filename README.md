@@ -8,7 +8,11 @@ xptView shiny app can be used to
 
 ## Workflow
 
-read xpt file from your system  
+### View table
+
+Read xpt file from your system  
+![landing page](documents/landing_page.jpg)  
+
 ![example](documents/example.jpg)  
 
 
