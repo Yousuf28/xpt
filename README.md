@@ -31,7 +31,7 @@ hit delete row button.
 ![delete](documents/delete.jpg)  
 
 ### Download
-After editing, table can be downloaded as xpt file.
+After editing, table can be downloaded as xpt file or csv file.
 
 
 
