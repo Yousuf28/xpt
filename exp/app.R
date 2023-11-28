@@ -90,7 +90,7 @@ server <- function(input, output) {
                               content = function(file) {
                                 df <- v()
                                 ## SASxport::write.xport(df, file=file)
-                                haven::write_xpt(df, file)
+                                haven::write_xpt(data = df, path=file, version = 5)
                               }
                             )
 
