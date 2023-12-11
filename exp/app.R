@@ -83,14 +83,22 @@ server <- function(input, output) {
   output$down_xpt <- shiny::downloadHandler(
                               filename = function() {
                                 file_name <- strsplit(input$file1$name, '.xpt')[[1]]
-                                ## print(file_name)
+                                
+                                 # print(file_name)
                                 paste0(file_name, ".xpt")
+                              
 
                               },
                               content = function(file) {
                                 df <- v()
+                                domain <- strsplit(input$file1$name, '.xpt')[[1]]
+                               temp_dir <- tempdir()
+                               print(temp_dir)
+                               path <- fs::path(temp_dir, paste0(toupper(domain), '.xpt'))
                                 ## SASxport::write.xport(df, file=file)
-                                haven::write_xpt(data = df, path=file, version = 5)
+                                
+                                haven::write_xpt(data = df, path=path, version = 5)
+                                fs::file_copy(path, file)
                               }
                             )
 
