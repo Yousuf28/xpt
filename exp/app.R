@@ -2,6 +2,7 @@
 # library(DT)
 # library(haven)
 
+source('create_xlsx.R')
 downloadButton <- function(...) {
   tag <- shiny::downloadButton(...)
   tag$attribs$download <- NULL
@@ -27,6 +28,8 @@ ui <- shiny::fluidPage(
                                  ## shiny::tags$br(),
 
                                  downloadButton('down_xpt', 'Download file as xpt'),
+                                 shiny::tags$hr(style = "border-top: 1px dashed black"),
+                                 downloadButton('down_xls', 'Download as excel file'),
                                  shiny::tags$hr(style = "border-top: 1px dashed black"),
                                  downloadButton('down_csv', 'Download file as csv')
 
@@ -115,6 +118,34 @@ server <- function(input, output) {
                                 write.csv(df, file=file, quote= FALSE, row.names=FALSE)
                               }
                             )
+
+# download xlsx (xcel file)
+output$down_xls  <- shiny::downloadHandler(
+
+                             filename = function() {
+                               file_name <- strsplit(input$file1$name, '.xpt')[[1]]
+                               paste0(file_name, ".xlsx")
+
+                             },
+                             content = function(file) {
+                               df <- v()
+                               var_meta <- create_xlsx(df)
+                               col <- dim(df)[2]
+                               var_n <- dim(df)[1]
+                               file_name <- strsplit(input$file1$name, '.xpt')[[1]]
+                               dataset_name <- toupper(file_name)
+                               df_meta <- data.frame(Dataset=c(dataset_name),
+                                                 Label=c(NA), Variable=c(col),
+                                                 Records=c(var_n))
+                               writexl::write_xlsx(list(`Dataset Metadata`=df_meta,
+                                                        `Variable Metadata`= var_meta,
+                                                        BW=df),
+                                                   path= file)
+
+                             }
+
+                           )
+
 
 }
   # Create Shiny app ----
