@@ -15,8 +15,8 @@ ui <- shiny::fluidPage(
                shiny::sidebarLayout(
                         shiny::sidebarPanel(width = 2,
 
-                                 shiny::fileInput('file1', "Choose xpt file",
-                                                  accept = '.xpt'),
+                                 shiny::fileInput('file1', "Choose xpt/xlsx file",
+                                                  accept = c('.xpt', '.xlsx')),
                                  shiny::tags$hr(style = "border-top: 1px dashed black"),
                                  ## shiny::tags$br(),
                                  shiny::actionButton('add_row', label = "Add Row"),
@@ -45,6 +45,8 @@ server <- function(input, output) {
   v <- shiny::reactiveVal()
   shiny::observeEvent(input$file1,{
     shiny::req(input$file1)
+    print(input$file1)
+    str(input$file1)
     tab <- haven::read_xpt(input$file1$datapath)
     ## tab <- SASxport::read.xport(input$file1$datapath)
     v(tab)
