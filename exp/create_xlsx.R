@@ -64,3 +64,25 @@ leng <- as.integer(leng)
 ## df <- haven::read_xpt('cl.xpt')
 ## kd <- create_xlsx(df)
 ## kd
+
+get_xlsx <- function(file) {
+
+v_meta <- readxl::read_xlsx(file, sheet = 'Variable Metadata')
+vm <- gsub('character', 'text', v_meta$Type)
+df_xl <- readxl::read_xlsx(file, sheet = 3, col_types = vm)
+for (i in 1:length(v_meta$Variable)) {
+  attr(df_xl[[i]], 'label') <- v_meta$Label[[i]]
+  if(!is.na(v_meta$Format[i])) {
+  formSAS <- paste0(v_meta$Length[i],v_meta$Format[i])
+  attr(df_xl[[i]], 'format.sas') <- formSAS
+  ## print(formSAS)
+  } else {
+    attr(df_xl[[i]], 'format.sas') <- NULL
+  }
+}
+  return(df_xl)
+}
+
+#example
+## df_xl <- get_xlsx('bw_func.xlsx')
+## str(df_xl)

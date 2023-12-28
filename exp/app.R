@@ -139,6 +139,7 @@ output$down_xls  <- shiny::downloadHandler(
                                df_meta <- data.frame(Dataset=c(dataset_name),
                                                  Label=c(NA), Variable=c(col),
                                                  Records=c(var_n))
+                               # how to name file BW to generic file name??
                                writexl::write_xlsx(list(`Dataset Metadata`=df_meta,
                                                         `Variable Metadata`= var_meta,
                                                         BW=df),
