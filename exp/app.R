@@ -45,11 +45,20 @@ server <- function(input, output) {
   v <- shiny::reactiveVal()
   shiny::observeEvent(input$file1,{
     shiny::req(input$file1)
-    print(input$file1)
-    str(input$file1)
+    print(input$file1$datapath)
+    ext <- basename(input$file1$datapath)
+
+    if(grepl('xpt', ext, ignore.case = T)){
+
     tab <- haven::read_xpt(input$file1$datapath)
     ## tab <- SASxport::read.xport(input$file1$datapath)
     v(tab)
+
+    } else{
+      tab <- get_xlsx(input$file1$datapath)
+
+      v(tab)
+    }
   })
  # render tabel
   output$contents <- DT::renderDT({
@@ -98,7 +107,7 @@ server <- function(input, output) {
                                 df <- v()
                                 domain <- strsplit(input$file1$name, '.xpt')[[1]]
                                temp_dir <- tempdir()
-                               print(temp_dir)
+                               ## print(temp_dir)
                                path <- fs::path(temp_dir, paste0(toupper(domain), '.xpt'))
                                 ## SASxport::write.xport(df, file=file)
                                 
@@ -111,7 +120,7 @@ server <- function(input, output) {
   output$down_csv <- shiny::downloadHandler(
                               filename = function() {
                                 file_name <- strsplit(input$file1$name, '.xpt')[[1]]
-                                print(file_name)
+                                ## print(file_name)
                                 paste0(file_name, ".csv")
 
                               },
@@ -139,7 +148,6 @@ output$down_xls  <- shiny::downloadHandler(
                                df_meta <- data.frame(Dataset=c(dataset_name),
                                                  Label=c(NA), Variable=c(col),
                                                  Records=c(var_n))
-                               # how to name file BW to generic file name??
                                writexl::write_xlsx(list(`Dataset Metadata`=df_meta,
                                                         `Variable Metadata`= var_meta,
                                                         BW=df),
